@@ -1,0 +1,100 @@
+﻿<div id="example">
+    <div class="container">
+        <div class="row">
+            <form id="myForm">
+
+                <div id="grid" style="margin-top:30px"></div>
+                <hr />
+
+                           </form>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section scripts{
+
+    <script>
+        let url = "/api/EmployeeLists";
+        $(document).ready(function () {
+            var crudServiceBaseUrl = url,
+                dataSource = new kendo.data.DataSource({
+                    transport: {
+                        read: {
+                            url: crudServiceBaseUrl,
+                            dataType: "json"
+                        },
+                        update: {
+                            // url: crudServiceBaseUrl + "/Products/Update",
+                            url: function (x) {
+                                return crudServiceBaseUrl + x.EmployeeId;
+                            },
+                            contentType: "application/json",
+                            type: "PUT"
+                        },
+                        create: {
+                            url: crudServiceBaseUrl,
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            type: "POST"
+                        },
+                        destroy: {
+                            url: function (EmployeeList) {
+                                return crudServiceBaseUrl + EmployeeList.EmployeeId;
+                            },
+                            contentType: "application/json",
+                            type: "DELETE"
+                        },
+                        parameterMap: function (options, operation) {
+                            if (operation !== "read" && options.models) {
+                                return { models: kendo.stringify(options.models) };
+                            }
+                        }
+                    },
+                    // batch: true, // in true bashe create kar nakhahad kard
+                    batch: false,
+
+                    pageSize: 4,
+                   
+                })
+            ///////////////
+            $("#grid").kendoGrid({
+                dataSource: dataSource,
+                height: 400,
+                //editable: "popup",
+                filterable: true,
+                sortable: true,
+                pageable: true,
+                groupable: true,
+                toolbar: [{ name: "create", text: "Add", iconClass: "fa fa-plus" }],
+                columns: [{
+                    field: "EmployeeId",
+                    filterable: false
+                }, {
+                    field: "FirstName",
+                    title: "تام",
+                }, {
+                    field: "LastName",
+                    title: "نام خانوادگی"
+                }, {
+                    field: "Company",
+                    title: "Company",
+                },
+                {
+                    //command: [
+                    //    { name: "Detail", text: "", iconClass: "fa fa-map-marker" },
+                    //    { name: "edit", text: { edit: "ویرایش ", update: "آپدیت ", cancel: " کنسل" }, iconClass: "fa fa-pencil" },
+                    //]
+                },
+                { command: "destroy", title: "حذف", width: "110px" },
+                { command: "edit", title: "ویرایش", width: "110px" },
+                ]
+            });
+          
+        });
+       
+    </script>
+
+}
